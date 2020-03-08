@@ -1,42 +1,68 @@
 # validation
 light validator
 
+# Install
+```
+composer require flatphp/validation
+```
+
 # Usage
 ```php
 use \Flatphp\Validation\Validator;
 
+// data value
 $data = ['username' => 'tom', 'email' => '', 'password' => '', 'age' => 10];
 
-$res = Validator::validate($data, array(
+// validate rules (验证规则和错误消息)
+$rules = array(
     'username' => ['required|length:3,20', array('required' => 'username required', 'length' => 'length range 3-20')],
     'email' => ['email', 'invalid email'],
     'password' => 'required'
-), $failed);
+);
 
+// validate
+$res = Validator::validate($data, $rules, $failed);
+
+// if failed echo failed message
 if (!$res) {
     echo $failed['msg'];
 }
 
+
 // failed is referenced value if fail, format: ['on' => 'required', 'msg' => 'username required']
+```
+
+## failed referenced value $failed 格式
+```
+// failed e.g.
+array(
+    'on' => 'required',
+    'msg' => 'username required'
+)
+```
 
 
-// single value validate
-
+## single value validate
+```php
+use \Flatphp\Validation\Validator;
 $value = 'hello';
 $res = Validator::validateOne($value, 'required|length:2,20', array(
     'required' => 'cannot be empty',
 ), $failed);
+```
 
-
-// simple use
+## simple use
+```php
 $res = Validator::isEmail('test@gmail.com');
 ```
 
-# How to custom your own validate method
-* Just extends Validator class and add your own method
-* Or Just write global function
+
+# How to custom your own validate method 加入定制自己的验证方法
+* Just extends Validator class and add your own method (继承)
+* Or Just write global function (写全局函数)
 *notes:*
-method|function should be like isXxx($value) or isXxx($value, $params), example:
+method|function should be like isXxx($value) or isXxx($value, $params), example:   
+方法或函数格式必须是这样的，参考以下：
 ```php
 function isZero($value)
 {
@@ -49,7 +75,7 @@ function isHasstr($value, $param)
 }
 ```
 
-# Methods
+# Methods 已有的方法和规则
 | method | rule | note |
 | --- | --- | --- |
 | isRequired | require | except 0 |
